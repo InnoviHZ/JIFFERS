@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIFFERS - Jigawa Flood Risk Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        /* Select styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Tab styling */
+        .tab-btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            color: rgb(55 65 81);
+            font-weight: 500;
+        }
+
+        .tab-btn:not(.active) {
+            color: rgb(107 114 128);
+        }
+
+        .tab-btn:not(.active):hover {
+            color: rgb(75 85 99);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Map containers */
+        #map, #evacuationMap {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+        }
+
+        #map {
+            min-height: 700px; /* Increased from 500px */
+            background: #f8fafc; /* Lighter background */
+        }
+
+        /* Chart containers */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            border: 2px solid #f3f4f6;
+            border-radius: 50%;
+            border-top: 2px solid #6366f1;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New styles for right sidebar */
+        #detailsSidebar {
+            width: 400px;
+            max-width: 100%;
+            background: #fff;
+            border-left: 1px solid #e5e7eb;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            margin-left: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        #detailsSidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Progress bar styles */
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+
+        .progress {
+            height: 100%;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Add these sticky sidebar styles */
+        .sticky-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Customize scrollbar for sidebars */
+        .sticky-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sticky-sidebar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .sticky-sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .sticky-sidebar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+    <div class="flex h-screen">
+        <!-- Left Sidebar -->
+        <div class="sidebar sticky-sidebar w-72 bg-white border-r flex flex-col">
+            <div class="p-4 border-b">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                    <h2 class="text-gray-700 font-medium">Filters & Export</h2>
+                </div>
+            </div>
+
+            <div class="p-4 flex-1">
+                <div class="mb-8">
+                    <h3 class="text-xs font-medium text-gray-500 mb-4 uppercase tracking-wide">Filter Data</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 mb-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Location (LGA)
+                            </label>
+                            <select id="locationFilter" class="w-full bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">All LGAs</option>
+                                <option value="auyo">Auyo</option>
+                                <option value="babura">Babura</option>
+                                <option value="biriniwa">Biriniwa</option>
+                                <option value="birnin-kudu">Birnin Kudu</option>
+                                <option value="buji">Buji</option>
+                                <option value="dutse">Dutse</option>
+                                <option value="gagarawa">Gagarawa</option>
+                                <option value="garki">Garki</option>
+                                <option value="gumel">Gumel</option>
+                                <option value="guri">Guri</option>
+                                <option value="gwaram">Gwaram</option>
+                                <option value="gwiwa">Gwiwa</option>
+                                <option value="hadejia">Hadejia</option>
+                                <option value="jahun">Jahun</option>
+                                <option value="kafin-hausa">Kafin Hausa</option>
+                                <option value="kaugama">Kaugama</option>
+                                <option value="kazaure">Kazaure</option>
+                                <option value="kiri-kasamma">Kiri Kasamma</option>
+                                <option value="kiyawa">Kiyawa</option>
+                                <option value="maigatari">Maigatari</option>
+                                <option value="malam-madori">Malam Madori</option>
+                                <option value="miga">Miga</option>
+                                <option value="ringim">Ringim</option>
+                                <option value="roni">Roni</option>
+                                <option value="sule-tankarkar">Sule Tankarkar</option>
+                                <option value="taura">Taura</option>
+                                <option value="yankwashi">Yankwashi</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 mb-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                                </svg>
+                                Risk Level
+                            </label>
+                            <select id="riskFilter" class="w-full bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">All Risk Levels</option>
+                                <option value="high">High Risk (75%+)</option>
+                                <option value="medium">Medium Risk (50-75%)</option>
+                                <option value="low">Low Risk (<50%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="applyFilters" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-4 py-2 mt-6 text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Apply Filters
+                    </button>
+                    <button id="resetFilters" class="w-full mt-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-md px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Reset Filters
+                    </button>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wide">Export Data</h3>
+                    <div class="space-y-2">
+                        <button id="downloadGeoTiff" class="w-full flex items-center gap-2 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-md text-sm text-gray-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download GeoTIFF
+                        </button>
+                        <button id="downloadGeoJson" class="w-full flex items-center gap-2 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-md text-sm text-gray-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Download GeoJSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add this button just before the closing div of the sidebar -->
+            <div class="mt-auto p-4 border-t">
+                <a href="settings.html" class="w-full flex items-center gap-2 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-md text-sm text-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Safe Places Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 flex flex-col overflow-auto">
+            <header class="bg-white border-b px-4 py-3 flex items-center gap-3">
+                <button class="md:hidden p-2 rounded-md hover:bg-gray-100" id="sidebarToggle">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <svg class="w-6 h-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <h1 class="text-xl font-semibold text-gray-800">JIFFERS Web</h1>
+                <div class="ml-auto text-sm text-gray-500">
+                    Last updated: <span id="lastUpdated">--</span>
+                </div>
+            </header>
+
+            <div class="flex-1 p-4 flex">
+                <!-- Main Map Container -->
+                <div class="flex-1">
+                    <div id="map" class="w-full h-full rounded-lg shadow-sm"></div>
+                </div>
+
+                <!-- Right Details Sidebar -->
+                <div id="detailsSidebar" class="hidden sticky-sidebar w-[400px] bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div class="sticky top-0 bg-white border-b z-10">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-lg font-medium text-gray-800" id="locationName">Location Details</h2>
+                                <button id="closeDetails" class="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-8">
+                        <!-- Risk Score -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="text-sm font-medium text-gray-500 mb-2">Risk Assessment</h3>
+                            <div class="flex items-baseline gap-2">
+                                <div class="text-3xl font-bold text-gray-900" id="riskScore">--</div>
+                                <div class="text-sm font-medium px-2 py-1 rounded-full bg-gray-200" id="riskStatus">--</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributing Factors -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-4">Contributing Factors</h3>
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm text-gray-600">Elevation</span>
+                                        <span class="text-sm font-medium text-gray-900" id="elevation">--</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                        <div id="elevationBar" class="bg-blue-500 h-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm text-gray-600">Soil Moisture</span>
+                                        <span class="text-sm font-medium text-gray-900" id="soilMoisture">--</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                        <div id="moistureBar" class="bg-green-500 h-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm text-gray-600">Rainfall</span>
+                                        <span class="text-sm font-medium text-gray-900" id="rainfall">--</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                        <div id="rainfallBar" class="bg-purple-500 h-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Evacuation Map -->
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 mb-3">Evacuation Routes</h3>
+                            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                <div id="evacuationMap" class="w-full h-72"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

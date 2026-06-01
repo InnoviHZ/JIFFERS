@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIFFERS - Safe Places Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="bg-slate-100">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Safe Places Management</h1>
+            <a href="index.html" class="text-gray-600 hover:text-gray-900">Back to Dashboard</a>
+        </div>
+
+        <!-- Add New Place Form -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-lg font-medium mb-4">Add New Safe Place</h2>
+            <form id="addPlaceForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Type</label>
+                    <select name="type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="Hospital">Hospital</option>
+                        <option value="School">School</option>
+                        <option value="Stadium">Stadium</option>
+                        <option value="Community Center">Community Center</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">LGA</label>
+                    <select name="lga" required class="form-select" id="lgaSelect">
+                        <option value="">Select LGA</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Capacity</label>
+                    <input type="number" name="capacity" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+                    <input type="text" name="contact_person" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contact Phone</label>
+                    <input type="tel" name="contact_phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Location</label>
+                    <div id="pickLocationMap" class="h-64 mt-1 rounded-md"></div>
+                </div>
+                <div class="col-span-2">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                        Add Safe Place
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Places List -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">LGA</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Capacity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="placesTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Places will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>

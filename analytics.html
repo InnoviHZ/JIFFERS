@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIFFERS - Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-100">
+    <!-- Navigation -->
+    <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <a href="index.html" class="flex items-center text-gray-600 hover:text-gray-900">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Dashboard
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-500" id="lastUpdated">Last updated: --</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-4 space-y-6">
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex flex-wrap gap-4">
+                <div class="w-48">
+                    <label class="block text-sm font-medium text-gray-700">Time Period</label>
+                    <select id="timePeriod" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="365">Last year</option>
+                    </select>
+                </div>
+                <div class="w-48">
+                    <label class="block text-sm font-medium text-gray-700">LGA</label>
+                    <select id="lgaFilter" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="">All LGAs</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-medium text-gray-500">Total High Risk Areas</h3>
+                <p class="mt-2 text-3xl font-bold text-red-600" id="highRiskCount">--</p>
+                <p class="mt-1 text-sm text-gray-500">Areas with risk level > 75%</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-medium text-gray-500">Total Safe Places</h3>
+                <p class="mt-2 text-3xl font-bold text-green-600" id="safePlacesCount">--</p>
+                <p class="mt-1 text-sm text-gray-500">Available evacuation centers</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-sm font-medium text-gray-500">Total Capacity</h3>
+                <p class="mt-2 text-3xl font-bold text-blue-600" id="totalCapacity">--</p>
+                <p class="mt-1 text-sm text-gray-500">People that can be accommodated</p>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Risk Level Distribution -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-lg font-medium mb-4">Risk Level Distribution</h2>
+                <canvas id="riskChart"></canvas>
+            </div>
+            
+            <!-- Safe Places Capacity -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-lg font-medium mb-4">Safe Places Capacity</h2>
+                <canvas id="capacityChart"></canvas>
+            </div>
+            
+            <!-- Monthly Rainfall Trends -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-lg font-medium mb-4">Monthly Rainfall</h2>
+                <canvas id="rainfallChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-4 border-b">
+                <h2 class="text-lg font-medium">LGA Risk Analysis</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">LGA</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Risk Level</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Safe Places</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Capacity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rainfall (mm)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysisTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/analytics.js"></script>
+</body>
+</html>

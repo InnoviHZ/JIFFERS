@@ -1,0 +1,266 @@
+{
+  "timestamp": "2024-01-20T08:00:00Z",
+  "predictions": [
+    {
+      "lga": "Auyo",
+      "risk_percentage": 85,
+      "factors": {
+        "elevation": 245,
+        "soil_moisture": 78,
+        "rainfall": 120,
+        "river_proximity": 0.9
+      }
+    },
+    {
+      "lga": "Babura",
+      "risk_percentage": 45,
+      "factors": {
+        "elevation": 320,
+        "soil_moisture": 45,
+        "rainfall": 60,
+        "river_proximity": 0.3
+      }
+    }
+    ,
+    {
+      "lga": "Birniwa",
+      "risk_percentage": 65,
+      "factors": {
+        "elevation": 280,
+        "soil_moisture": 62,
+        "rainfall": 85,
+        "river_proximity": 0.6
+      }
+    },
+    {
+      "lga": "Gagarawa",
+      "risk_percentage": 75,
+      "factors": {
+        "elevation": 260,
+        "soil_moisture": 70,
+        "rainfall": 95,
+        "river_proximity": 0.7
+      }
+    },
+    {
+      "lga": "Hadejia",
+      "risk_percentage": 90,
+      "factors": {
+        "elevation": 235,
+        "soil_moisture": 85,
+        "rainfall": 130,
+        "river_proximity": 0.95
+      }
+    },
+    {
+      "lga": "Guri",
+      "risk_percentage": 82,
+      "factors": {
+        "elevation": 240,
+        "soil_moisture": 80,
+        "rainfall": 115,
+        "river_proximity": 0.85
+      }
+    },
+    {
+      "lga": "Gwaram",
+      "risk_percentage": 60,
+      "factors": {
+        "elevation": 300,
+        "soil_moisture": 55,
+        "rainfall": 75,
+        "river_proximity": 0.5
+      }
+    },
+    {
+      "lga": "Gwiwa",
+      "risk_percentage": 50,
+      "factors": {
+        "elevation": 310,
+        "soil_moisture": 50,
+        "rainfall": 65,
+        "river_proximity": 0.4
+      }
+    },
+    {
+      "lga": "Jahun",
+      "risk_percentage": 70,
+      "factors": {
+        "elevation": 270,
+        "soil_moisture": 65,
+        "rainfall": 90,
+        "river_proximity": 0.65
+      }
+    },
+    {
+      "lga": "Kafin Hausa",
+      "risk_percentage": 80,
+      "factors": {
+        "elevation": 250,
+        "soil_moisture": 75,
+        "rainfall": 110,
+        "river_proximity": 0.8
+      }
+    },
+    {
+      "lga": "Kaugama",
+      "risk_percentage": 75,
+      "factors": {
+        "elevation": 255,
+        "soil_moisture": 70,
+        "rainfall": 100,
+        "river_proximity": 0.75
+      }
+    },
+    {
+      "lga": "Kazaure",
+      "risk_percentage": 45,
+      "factors": {
+        "elevation": 325,
+        "soil_moisture": 40,
+        "rainfall": 55,
+        "river_proximity": 0.25
+      }
+    },
+    {
+      "lga": "Kiri Kasamma",
+      "risk_percentage": 85,
+      "factors": {
+        "elevation": 240,
+        "soil_moisture": 80,
+        "rainfall": 120,
+        "river_proximity": 0.9
+      }
+    },
+    {
+      "lga": "Kiyawa",
+      "risk_percentage": 55,
+      "factors": {
+        "elevation": 290,
+        "soil_moisture": 50,
+        "rainfall": 70,
+        "river_proximity": 0.45
+      }
+    },
+    {
+      "lga": "Maigatari",
+      "risk_percentage": 40,
+      "factors": {
+        "elevation": 330,
+        "soil_moisture": 35,
+        "rainfall": 50,
+        "river_proximity": 0.2
+      }
+    },
+    {
+      "lga": "Malam Madori",
+      "risk_percentage": 88,
+      "factors": {
+        "elevation": 238,
+        "soil_moisture": 82,
+        "rainfall": 125,
+        "river_proximity": 0.92
+      }
+    },
+    {
+      "lga": "Miga",
+      "risk_percentage": 65,
+      "factors": {
+        "elevation": 275,
+        "soil_moisture": 60,
+        "rainfall": 85,
+        "river_proximity": 0.6
+      }
+    },
+    {
+      "lga": "Ringim",
+      "risk_percentage": 60,
+      "factors": {
+        "elevation": 285,
+        "soil_moisture": 55,
+        "rainfall": 80,
+        "river_proximity": 0.55
+      }
+    },
+    {
+      "lga": "Roni",
+      "risk_percentage": 35,
+      "factors": {
+        "elevation": 340,
+        "soil_moisture": 30,
+        "rainfall": 45,
+        "river_proximity": 0.15
+      }
+    },
+    {
+      "lga": "Sule Tankarkar",
+      "risk_percentage": 70,
+      "factors": {
+        "elevation": 265,
+        "soil_moisture": 65,
+        "rainfall": 95,
+        "river_proximity": 0.7
+      }
+    },
+    {
+      "lga": "Taura",
+      "risk_percentage": 55,
+      "factors": {
+        "elevation": 295,
+        "soil_moisture": 50,
+        "rainfall": 75,
+        "river_proximity": 0.5
+      }
+    },
+    {
+      "lga": "Yankwashi",
+      "risk_percentage": 40,
+      "factors": {
+        "elevation": 335,
+        "soil_moisture": 35,
+        "rainfall": 50,
+        "river_proximity": 0.2
+      }
+    },
+    {
+      "lga": "Dutse",
+      "risk_percentage": 50,
+      "factors": {
+        "elevation": 305,
+        "soil_moisture": 45,
+        "rainfall": 65,
+        "river_proximity": 0.4
+      }
+    },
+    {
+      "lga": "Buji",
+      "risk_percentage": 60,
+      "factors": {
+        "elevation": 280,
+        "soil_moisture": 55,
+        "rainfall": 80,
+        "river_proximity": 0.55
+      }
+    },
+    {
+      "lga": "Birnin Kudu",
+      "risk_percentage": 45,
+      "factors": {
+        "elevation": 315,
+        "soil_moisture": 40,
+        "rainfall": 60,
+        "river_proximity": 0.35
+      }
+    },
+    {
+      "lga": "Gumel",
+      "risk_percentage": 42,
+      "factors": {
+        "elevation": 320,
+        "soil_moisture": 38,
+        "rainfall": 55,
+        "river_proximity": 0.3
+      }
+    }
+  ]
+}
